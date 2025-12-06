@@ -1,33 +1,36 @@
 <?xml version="1.0"?>
 <!--
-  Standalone RealSense D435 camera on a short tabletop stand for Kinova simulation.
-  Designed to sit on the table surface and look across at the robot and objects.
+  Standalone RealSense D435 camera on an elevated stand for Kinova simulation.
+  Designed to sit on the table surface with elevated view looking down at the entire workspace.
+
+  Stand height: 50cm (provides overhead view of table and robot)
+  Camera total height above table: ~52cm
 -->
 <robot name="camera_stand" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Include the D435 camera macro -->
   <xacro:include filename="$(find realsense_gazebo_description)/urdf/_d435.urdf.xacro"/>
 
-  <!-- Camera stand base - short tabletop tripod -->
+  <!-- Camera stand base - tall tripod for elevated view -->
   <link name="camera_stand_base">
     <visual>
       <geometry>
-        <cylinder radius="0.03" length="0.12"/>
+        <cylinder radius="0.03" length="0.50"/>
       </geometry>
-      <origin xyz="0 0 0.06" rpy="0 0 0"/>
+      <origin xyz="0 0 0.25" rpy="0 0 0"/>
       <material name="dark_metal">
         <color rgba="0.2 0.2 0.2 1"/>
       </material>
     </visual>
     <collision>
       <geometry>
-        <cylinder radius="0.03" length="0.12"/>
+        <cylinder radius="0.03" length="0.50"/>
       </geometry>
-      <origin xyz="0 0 0.06" rpy="0 0 0"/>
+      <origin xyz="0 0 0.25" rpy="0 0 0"/>
     </collision>
     <inertial>
-      <mass value="0.3"/>
-      <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.002" iyz="0" izz="0.002"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.002"/>
     </inertial>
   </link>
 
@@ -55,7 +58,7 @@
   <joint name="stand_to_mount" type="fixed">
     <parent link="camera_stand_base"/>
     <child link="camera_mount"/>
-    <origin xyz="0 0 0.13" rpy="0 0 0"/>
+    <origin xyz="0 0 0.51" rpy="0 0 0"/>
   </joint>
 
   <!-- Attach D435 camera to mount -->
@@ -71,9 +74,10 @@
                      color_height="480"
                      color_fps="30"
                      visualize="false">
-    <!-- Camera orientation: facing back towards robot (-x direction) with slight downward tilt -->
-    <!-- rpy: roll=0, pitch=0.15rad (~8.6 deg down), yaw=pi (facing back towards robot) -->
-    <origin xyz="0 0 0.02" rpy="0 0.15 3.14159"/>
+    <!-- Camera orientation: facing back towards robot (-x direction) with moderate downward tilt -->
+    <!-- rpy: roll=0, pitch=0.45rad (~26 deg down), yaw=pi (facing back towards robot) -->
+    <!-- This angle provides good coverage of table surface and robot arm -->
+    <origin xyz="0 0 0.02" rpy="0 0.45 3.14159"/>
   </xacro:sensor_d435>
 
 </robot>
