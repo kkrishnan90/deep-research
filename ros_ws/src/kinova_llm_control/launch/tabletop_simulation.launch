@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+  Tabletop Pick-and-Place Simulation
+
+  Layout:
+  - Table: 1.2m x 0.8m at height 0.75m
+  - Robot: On one end of table (near edge)
+  - Camera: On opposite end, looking across the table
+  - Objects: Colored balls scattered on the table
+
+  Usage:
+    roslaunch kinova_llm_control tabletop_simulation.launch
+-->
+<launch>
+  <!-- Robot Arguments -->
+  <arg name="kinova_robotType" default="m1n6s300"/>
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
+  <arg name="use_trajectory_controller" default="true"/>
+  <arg name="paused" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <!-- LLM Configuration -->
+  <arg name="project_id" default="account-pocs"/>
+  <arg name="location" default="us-central1"/>
+  <arg name="model_name" default="gemini-2.0-flash"/>
+
+  <!-- Robot position (on near edge of table, elevated to table height) -->
+  <!-- Table is at x=0.5, so robot at x=0.0 (near edge), z=0.765 (on table surface) -->
+  <arg name="robot_x" default="0.0"/>
+  <arg name="robot_y" default="0.0"/>
+  <arg name="robot_z" default="0.765"/>
+
+  <!-- Camera position (far end of table, looking back at robot and objects) -->
+  <!-- Table extends to x=1.1, camera slightly beyond at x=1.2 -->
+  <arg name="camera_x" default="1.15"/>
+  <arg name="camera_y" default="0.0"/>
+  <arg name="camera_z" default="0.765"/>
+
+  <!-- ==================== Gazebo World ==================== -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find kinova_llm_control)/worlds/tabletop_workspace.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="use_sim_time" value="true"/>
+  </include>
+
+  <!-- ==================== Robot URDF ==================== -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro $(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro"/>
+
+  <!-- Spawn robot on the table -->
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-urdf -param robot_description -model $(arg kinova_robotName)
+              -x $(arg robot_x) -y $(arg robot_y) -z $(arg robot_z)
+              -J $(arg kinova_robotName)_joint_1 0.0
+              -J $(arg kinova_robotName)_joint_2 2.9
+              -J $(arg kinova_robotName)_joint_3 1.3
+              -J $(arg kinova_robotName)_joint_4 -2.07
+              -J $(arg kinova_robotName)_joint_5 1.4
+              -J $(arg kinova_robotName)_joint_6 0.0
+              -J $(arg kinova_robotName)_joint_finger_1 1.0
+              -J $(arg kinova_robotName)_joint_finger_2 1.0
+              -J $(arg kinova_robotName)_joint_finger_3 1.0"/>
+
+  <!-- Robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- Joint state publisher from Gazebo -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="false"/>
+    <rosparam param="source_list">[/$(arg kinova_robotName)/joint_states]</rosparam>
+  </node>
+
+  <!-- Load controllers -->
+  <rosparam file="$(find kinova_control)/config/$(arg kinova_robotName)_control.yaml" command="load"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen"
+        args="$(arg kinova_robotName)_joint_state_controller
+              $(arg kinova_robotName)_effort_finger_trajectory_controller
+              $(arg kinova_robotName)_effort_joint_trajectory_controller"/>
+
+  <!-- ==================== RealSense D435 Camera ==================== -->
+  <!-- Camera on far end of table, looking back -->
+  <param name="camera_description"
+         command="$(find xacro)/xacro $(find kinova_llm_control)/urdf/camera_stand.urdf.xacro"/>
+
+  <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-urdf -param camera_description -model camera_stand
+              -x $(arg camera_x) -y $(arg camera_y) -z $(arg camera_z)"/>
+
+  <!-- ==================== MoveIt Motion Planning ==================== -->
+  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch"/>
+
+  <!-- ==================== LLM Controller ==================== -->
+  <node name="llm_controller"
+        pkg="kinova_llm_control"
+        type="llm_controller_wrapper.sh"
+        output="screen"
+        respawn="false">
+    <param name="project_id" value="$(arg project_id)"/>
+    <param name="location" value="$(arg location)"/>
+    <param name="model_name" value="$(arg model_name)"/>
+  </node>
+
+  <!-- ==================== Command Interface ==================== -->
+  <node name="command_interface"
+        pkg="kinova_llm_control"
+        type="command_interface.py"
+        output="screen"
+        launch-prefix="xterm -title 'Kinova LLM Commands' -e"/>
+
+</launch>
