@@ -3,7 +3,7 @@
 
 # LLM Settings
 llm:
-  project_id: "saib-ai-playground"
+  project_id: "account-pocs"
   location: "global"
   model_name: "gemini-3-pro-preview"
   max_tokens: 5000

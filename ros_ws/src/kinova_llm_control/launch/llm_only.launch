@@ -7,7 +7,7 @@
 -->
 <launch>
   <!-- LLM Configuration -->
-  <arg name="project_id" default="saib-ai-playground"/>
+  <arg name="project_id" default="account-pocs"/>
   <arg name="location" default="global"/>
   <arg name="model_name" default="gemini-3-pro-preview"/>
 
