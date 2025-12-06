@@ -27,7 +27,7 @@
   <!-- Robot position: ON table edge (table spans x=-0.1 to 1.1, so place robot at near edge) -->
   <arg name="robot_x" default="-0.05"/>
   <arg name="robot_y" default="0.0"/>
-  <arg name="robot_z" default="0.75"/>
+  <arg name="robot_z" default="0.765"/>
 
   <!-- Camera position: Elevated above table at far end, looking down at workspace -->
   <arg name="camera_x" default="0.95"/>
@@ -46,7 +46,7 @@
 
   <!-- ==================== Load Kinova Robot URDF ==================== -->
   <param name="robot_description"
-         command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'"/>
+         command="$(find xacro)/xacro --inorder '$(find kinova_llm_control)/urdf/m1n6s300_tabletop.xacro'"/>
 
   <!-- ==================== Spawn Kinova Robot ON TABLE ==================== -->
   <!-- Robot base positioned at table edge (x=-0.05) at table height (z=0.75) -->

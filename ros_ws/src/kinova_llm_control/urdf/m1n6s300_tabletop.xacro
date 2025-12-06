@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+  URDF for Kinova Mico M1N6S300 on a tabletop.
+  Includes a 'world' link and fixes the robot 'root' to it.
+  This ensures the robot is static (fixed base) in Gazebo.
+  The actual position is determined by spawn_model arguments in the launch file.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="m1n6s300_tabletop">
+
+  <!-- Include Kinova robot description -->
+  <xacro:include filename="$(find kinova_description)/urdf/m1n6s300.xacro"/>
+
+  <!-- World link for fixed base -->
+  <link name="world"/>
+  <link name="root"/>
+
+  <!-- Fix robot root to world at 0,0,0 -->
+  <joint name="connect_root_and_world" type="fixed">
+    <parent link="world"/>
+    <child link="root"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Kinova robot attached to root -->
+  <xacro:property name="robot_root" value="root"/>
+  <xacro:m1n6s300 base_parent="${robot_root}"/>
+
+</robot>
