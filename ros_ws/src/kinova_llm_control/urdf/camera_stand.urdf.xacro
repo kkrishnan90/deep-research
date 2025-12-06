@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+  Standalone RealSense D435 camera on a stand for Kinova simulation.
+  This creates a camera that can be spawned independently in Gazebo.
+-->
+<robot name="camera_stand" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Include the D435 camera macro -->
+  <xacro:include filename="$(find realsense_gazebo_description)/urdf/_d435.urdf.xacro"/>
+
+  <!-- Camera stand base link -->
+  <link name="camera_stand_base">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.5"/>
+      </geometry>
+      <origin xyz="0 0 0.25" rpy="0 0 0"/>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.05" length="0.5"/>
+      </geometry>
+      <origin xyz="0 0 0.25" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!-- Camera mount on top of stand -->
+  <link name="camera_mount">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.02"/>
+      </geometry>
+      <material name="dark_grey">
+        <color rgba="0.3 0.3 0.3 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <joint name="stand_to_mount" type="fixed">
+    <parent link="camera_stand_base"/>
+    <child link="camera_mount"/>
+    <origin xyz="0 0 0.51" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Attach D435 camera to mount -->
+  <xacro:sensor_d435 parent="camera_mount"
+                     name="camera"
+                     topics_ns="camera"
+                     align_depth="true"
+                     enable_pointCloud="true"
+                     depth_width="640"
+                     depth_height="480"
+                     depth_fps="30"
+                     color_width="640"
+                     color_height="480"
+                     color_fps="30"
+                     visualize="false">
+    <!-- Camera tilted down to look at workspace -->
+    <origin xyz="0 0 0.02" rpy="0 0.5 3.14159"/>
+  </xacro:sensor_d435>
+
+</robot>

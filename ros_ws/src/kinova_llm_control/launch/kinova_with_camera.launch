@@ -12,8 +12,9 @@
     roslaunch kinova_llm_control kinova_with_camera.launch
 -->
 <launch>
-  <!-- Arguments -->
+  <!-- Robot Arguments -->
   <arg name="kinova_robotType" default="m1n6s300"/>
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
   <arg name="use_trajectory_controller" default="true"/>
   <arg name="paused" default="false"/>
   <arg name="gui" default="true"/>
@@ -23,28 +24,34 @@
   <arg name="location" default="us-central1"/>
   <arg name="model_name" default="gemini-3-pro-preview"/>
 
-  <!-- Launch Gazebo with Kinova arm -->
+  <!-- Camera position (in front of robot, looking back) -->
+  <arg name="camera_x" default="0.6"/>
+  <arg name="camera_y" default="0.0"/>
+  <arg name="camera_z" default="0.0"/>
+
+  <!-- ==================== Gazebo with Kinova arm ==================== -->
   <include file="$(find kinova_gazebo)/launch/robot_launch.launch">
     <arg name="kinova_robotType" value="$(arg kinova_robotType)"/>
+    <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
     <arg name="use_trajectory_controller" value="$(arg use_trajectory_controller)"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gui)"/>
   </include>
 
-  <!-- Spawn RealSense D435 camera on a stand -->
+  <!-- ==================== RealSense D435 Camera ==================== -->
+  <!-- Load camera URDF -->
   <param name="camera_description"
-         command="$(find xacro)/xacro $(find realsense_gazebo_description)/urdf/d435.urdf.xacro"/>
+         command="$(find xacro)/xacro $(find kinova_llm_control)/urdf/camera_stand.urdf.xacro"/>
 
-  <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model"
-        args="-urdf -param camera_description -model realsense_d435
-              -x 0.5 -y 0.0 -z 0.5 -R 0 -P 0.5 -Y 3.14159"
-        output="screen"/>
+  <!-- Spawn camera in Gazebo -->
+  <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-urdf -param camera_description -model camera_stand
+              -x $(arg camera_x) -y $(arg camera_y) -z $(arg camera_z)"/>
 
-  <!-- Launch MoveIt -->
-  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch">
-  </include>
+  <!-- ==================== MoveIt Motion Planning ==================== -->
+  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch"/>
 
-  <!-- Launch LLM Controller -->
+  <!-- ==================== LLM Controller ==================== -->
   <node name="llm_controller"
         pkg="kinova_llm_control"
         type="llm_controller.py"
@@ -55,11 +62,12 @@
     <param name="model_name" value="$(arg model_name)"/>
   </node>
 
-  <!-- Launch Command Interface for user input -->
+  <!-- ==================== Command Interface ==================== -->
+  <!-- Run in separate terminal - user can also run manually -->
   <node name="command_interface"
         pkg="kinova_llm_control"
         type="command_interface.py"
         output="screen"
-        launch-prefix="xterm -e"/>
+        launch-prefix="xterm -title 'Kinova LLM Commands' -e"/>
 
 </launch>

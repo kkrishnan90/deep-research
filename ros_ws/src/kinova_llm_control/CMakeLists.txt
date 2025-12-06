@@ -41,7 +41,7 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-## Install launch files and config
-install(DIRECTORY launch config
+## Install launch files, config, and urdf
+install(DIRECTORY launch config urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
