@@ -71,8 +71,10 @@
                      color_height="480"
                      color_fps="30"
                      visualize="false">
-    <!-- Camera tilted down to look at workspace -->
-    <origin xyz="0 0 0.02" rpy="0 0.5 3.14159"/>
+    <!-- Camera tilted down ~40 degrees to see workspace and table -->
+    <!-- rpy: roll=0, pitch=0.7rad (~40 deg down), yaw=2.8 (facing towards workspace center) -->
+    <!-- yaw slightly less than pi to point towards table area on the right -->
+    <origin xyz="0 0 0.02" rpy="0 0.7 2.8"/>
   </xacro:sensor_d435>
 
 </robot>
