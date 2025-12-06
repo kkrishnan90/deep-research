@@ -25,15 +25,14 @@
   <arg name="model_name" default="gemini-2.0-flash"/>
 
   <!-- Camera position (far end of table, sitting on table surface looking back) -->
-  <!-- Table extends from x=-0.1 to x=1.1, so camera at x=0.95 is on the table near the far edge -->
-  <!-- z=0.765 is just above table surface (0.75m + 0.015m clearance) -->
   <arg name="camera_x" default="0.95"/>
   <arg name="camera_y" default="0.0"/>
   <arg name="camera_z" default="0.765"/>
 
-  <!-- ==================== Gazebo with Kinova arm (use original launch) ==================== -->
-  <!-- This properly sets up all controllers -->
-  <include file="$(find kinova_gazebo)/launch/robot_launch.launch">
+  <!-- ==================== Gazebo with Kinova arm ==================== -->
+  <!-- IMPORTANT: kinova_gazebo/robot_launch.launch does NOT accept 'world' argument -->
+  <!-- Only pass the arguments it actually accepts -->
+  <include file="$(find kinova_gazebo)/launch/robot_launch.launch" pass_all_args="false">
     <arg name="kinova_robotType" value="$(arg kinova_robotType)"/>
     <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
     <arg name="use_trajectory_controller" value="$(arg use_trajectory_controller)"/>
@@ -65,16 +64,25 @@
 
   <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
         args="-urdf -param camera_description -model camera_stand
-              -x $(arg camera_x) -y $(arg camera_y) -z $(arg camera_z)"/>
+              -x $(arg camera_x) -y $(arg camera_y) -z $(arg camera_z)"
+        launch-prefix="bash -c 'sleep 2; $0 $@'"/>
 
   <!-- ==================== MoveIt Motion Planning ==================== -->
-  <!-- Use move_group.launch instead of gazebo_demo to avoid re-launching Gazebo -->
-  <include file="$(find m1n6s300_moveit_config)/launch/move_group.launch">
-    <arg name="publish_monitored_planning_scene" value="true"/>
+  <!-- Load planning context (URDF/SRDF) - this is safe and doesn't launch Gazebo -->
+  <include file="$(find m1n6s300_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="false"/>
   </include>
 
-  <!-- Robot state publisher for TF -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true"/>
+  <!-- Start move_group node directly (avoiding any problematic launch includes) -->
+  <node name="move_group" pkg="moveit_ros_move_group" type="move_group" respawn="false" output="screen">
+    <param name="allow_trajectory_execution" value="true"/>
+    <param name="max_safe_path_cost" value="1"/>
+    <param name="jiggle_fraction" value="0.05"/>
+    <param name="planning_scene_monitor/publish_planning_scene" value="true"/>
+    <param name="planning_scene_monitor/publish_geometry_updates" value="true"/>
+    <param name="planning_scene_monitor/publish_state_updates" value="true"/>
+    <param name="planning_scene_monitor/publish_transforms_updates" value="true"/>
+  </node>
 
   <!-- ==================== LLM Controller ==================== -->
   <node name="llm_controller"
