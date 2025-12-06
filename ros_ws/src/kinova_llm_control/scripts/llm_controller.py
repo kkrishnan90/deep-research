@@ -474,6 +474,9 @@ Available function patterns:
                     # Add the model's response (which contains function calls) to history
                     contents.append(response.candidates[0].content)
 
+                    # Collect all function responses in a single Content object
+                    # (Gemini requires all responses in one turn)
+                    function_response_parts = []
                     for fc in function_calls:
                         func_name = fc.name
                         func_args = fc.args if fc.args else {}
@@ -484,14 +487,17 @@ Available function patterns:
                         result_text = str(self._execute_function(func_name, func_args))
                         rospy.loginfo(f"Function result: {result_text}")
 
-                        # Add function response to history
-                        contents.append(types.Content(
-                            role="tool",
-                            parts=[types.Part.from_function_response(
-                                name=func_name,
-                                response={"result": result_text}
-                            )]
+                        # Collect function response part
+                        function_response_parts.append(types.Part.from_function_response(
+                            name=func_name,
+                            response={"result": result_text}
                         ))
+
+                    # Add all function responses as a single Content
+                    contents.append(types.Content(
+                        role="tool",
+                        parts=function_response_parts
+                    ))
                     
                     turn += 1
                     # Loop continues to send the updated history back to Gemini
