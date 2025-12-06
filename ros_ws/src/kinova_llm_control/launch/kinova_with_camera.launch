@@ -51,7 +51,13 @@
               -x $(arg camera_x) -y $(arg camera_y) -z $(arg camera_z)"/>
 
   <!-- ==================== MoveIt Motion Planning ==================== -->
-  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch"/>
+  <!-- Use move_group.launch instead of gazebo_demo to avoid re-launching Gazebo -->
+  <include file="$(find m1n6s300_moveit_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true"/>
+  </include>
+
+  <!-- Robot state publisher for TF -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true"/>
 
   <!-- ==================== LLM Controller ==================== -->
   <!-- Using wrapper script to ensure venv Python with google-genai is used -->
