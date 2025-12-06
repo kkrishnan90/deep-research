@@ -23,8 +23,8 @@
   <arg name="gui" default="true"/>
 
   <!-- LLM Configuration -->
-  <arg name="project_id" default="account-pocs"/>
-  <arg name="location" default="us-central1"/>
+  <arg name="project_id" default="saib-ai-playground"/>
+  <arg name="location" default="global"/>
   <arg name="model_name" default="gemini-3-pro-preview"/>
 
   <!-- Launch Gazebo with Kinova arm -->

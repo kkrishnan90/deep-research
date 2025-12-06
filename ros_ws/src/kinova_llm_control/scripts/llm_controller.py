@@ -45,9 +45,9 @@ class LLMController:
         """Initialize the LLM controller node."""
         rospy.init_node('llm_controller', anonymous=False)
 
-        # Configuration
-        self.project_id = rospy.get_param('~project_id', 'account-pocs')
-        self.location = rospy.get_param('~location', 'us-central1')
+        # Configuration - using saib-ai-playground for Gemini API access
+        self.project_id = rospy.get_param('~project_id', 'saib-ai-playground')
+        self.location = rospy.get_param('~location', 'global')
         self.model_name = rospy.get_param('~model_name', 'gemini-3-pro-preview')
 
         # Initialize Gemini client
