@@ -5,7 +5,7 @@
 llm:
   project_id: "account-pocs"
   location: "us-central1"
-  model_name: "gemini-2.5-flash"
+  model_name: "gemini-3-pro-preview"
   max_tokens: 5000
   temperature: 1
 

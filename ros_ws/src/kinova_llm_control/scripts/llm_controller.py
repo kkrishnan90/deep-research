@@ -48,7 +48,7 @@ class LLMController:
         # Configuration
         self.project_id = rospy.get_param('~project_id', 'account-pocs')
         self.location = rospy.get_param('~location', 'us-central1')
-        self.model_name = rospy.get_param('~model_name', 'gemini-2.5-flash')
+        self.model_name = rospy.get_param('~model_name', 'gemini-3-pro-preview')
 
         # Initialize Gemini client
         self.gemini_client = None

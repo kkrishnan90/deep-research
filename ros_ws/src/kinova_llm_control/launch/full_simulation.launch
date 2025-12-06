@@ -25,7 +25,7 @@
   <!-- LLM Configuration -->
   <arg name="project_id" default="account-pocs"/>
   <arg name="location" default="us-central1"/>
-  <arg name="model_name" default="gemini-2.5-flash"/>
+  <arg name="model_name" default="gemini-3-pro-preview"/>
 
   <!-- Launch Gazebo with Kinova arm -->
   <include file="$(find kinova_gazebo)/launch/robot_launch.launch">
