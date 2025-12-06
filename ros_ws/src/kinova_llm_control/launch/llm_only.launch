@@ -9,7 +9,7 @@
   <!-- LLM Configuration -->
   <arg name="project_id" default="account-pocs"/>
   <arg name="location" default="us-central1"/>
-  <arg name="model_name" default="gemini-3-pro-preview"/>
+  <arg name="model_name" default="gemini-2.5-flash"/>
 
   <!-- Launch LLM Controller -->
   <node name="llm_controller"
