@@ -428,7 +428,7 @@ Available function patterns:
             ))
             rospy.loginfo("Sending image to Gemini for analysis")
 
-        contents.append(types.Part.from_text(command))
+        contents.append(types.Part.from_text(text=command))
 
         # Multi-turn loop
         max_turns = 10
