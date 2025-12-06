@@ -15,6 +15,18 @@ Author: Developer
 License: MIT
 """
 
+# Add ROS Python paths for PyKDL when running in venv
+import sys
+import os
+ros_python_paths = [
+    '/opt/ros/noetic/lib/python3/dist-packages',
+    os.path.expanduser('~/catkin_ws/devel/lib/python3/dist-packages'),
+]
+for path in ros_python_paths:
+    expanded = os.path.expanduser(path)
+    if expanded not in sys.path and os.path.exists(expanded):
+        sys.path.insert(0, expanded)
+
 import rospy
 import numpy as np
 import cv2
