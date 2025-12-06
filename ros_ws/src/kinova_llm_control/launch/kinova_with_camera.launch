@@ -24,12 +24,12 @@
   <arg name="location" default="global"/>
   <arg name="model_name" default="gemini-3-pro-preview"/>
 
-  <!-- Camera position (elevated front view for full workspace coverage) -->
-  <!-- Position: 1.0m front, 0.0m center, 0.5m up (total height ~1.03m with stand) -->
-  <!-- This gives a bird's-eye view of both the arm AND the object area to the right -->
-  <arg name="camera_x" default="1.0"/>
+  <!-- Camera position (front view for workspace coverage) -->
+  <!-- With shorter tabletop stand (~0.15m), spawn at ground level for elevated view -->
+  <!-- Camera will be at ~0.15m height, looking at robot workspace -->
+  <arg name="camera_x" default="0.8"/>
   <arg name="camera_y" default="0.0"/>
-  <arg name="camera_z" default="0.5"/>
+  <arg name="camera_z" default="0.0"/>
 
   <!-- ==================== Gazebo with Kinova arm ==================== -->
   <include file="$(find kinova_gazebo)/launch/robot_launch.launch">
