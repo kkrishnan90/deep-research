@@ -5,11 +5,15 @@
 
   Stand height: 50cm (provides overhead view of table and robot)
   Camera total height above table: ~52cm
+  NOTE: Stand is STATIC (fixed in place, does not fall over)
 -->
 <robot name="camera_stand" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- Include the D435 camera macro -->
   <xacro:include filename="$(find realsense_gazebo_description)/urdf/_d435.urdf.xacro"/>
+
+  <!-- World link for fixed base -->
+  <link name="world"/>
 
   <!-- Camera stand base - tall tripod for elevated view -->
   <link name="camera_stand_base">
@@ -33,6 +37,13 @@
       <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.002"/>
     </inertial>
   </link>
+
+  <!-- Fix stand to world so it doesn't fall over -->
+  <joint name="world_to_stand" type="fixed">
+    <parent link="world"/>
+    <child link="camera_stand_base"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
 
   <!-- Camera mount on top of stand -->
   <link name="camera_mount">
