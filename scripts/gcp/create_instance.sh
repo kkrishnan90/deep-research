@@ -34,8 +34,8 @@ gcloud compute instances create $INSTANCE_NAME \
     --machine-type=$MACHINE_TYPE \
     --boot-disk-size=200GB \
     --boot-disk-type=pd-ssd \
-    --image-family=ubuntu-2004-lts \
-    --image-project=ubuntu-os-cloud \
+    --image-family=ubuntu-pro-2004-lts \
+    --image-project=ubuntu-os-pro-cloud \
     --maintenance-policy=TERMINATE \
     --restart-on-failure \
     --tags=http-server,https-server \

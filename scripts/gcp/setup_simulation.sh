@@ -52,8 +52,9 @@ fi
 echo "[5/6] Cloning deep-research project..."
 if [ ! -d "deep-research" ]; then
     git clone https://github.com/kkrishnan90/deep-research.git
-    # Create symlink to the ROS package in catkin workspace
-    ln -sf ~/catkin_ws/src/deep-research/ros_ws/src/kinova_llm_control ~/catkin_ws/src/kinova_llm_control
+    # Note: The kinova_llm_control package is located at:
+    # ~/catkin_ws/src/deep-research/ros_ws/src/kinova_llm_control
+    # rosdep and catkin will find it automatically - no symlink needed
 else
     echo "deep-research already exists, pulling latest..."
     cd deep-research && git pull && cd ..
