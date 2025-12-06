@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/krishnan_kkrish_altostrat_com/llm_venv/bin/python3
 """
 LLM Controller for Kinova Mico arm using Gemini API.
 
