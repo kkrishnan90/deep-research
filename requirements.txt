@@ -1,0 +1,9 @@
+# Google Gemini API
+google-genai
+
+# Data processing
+numpy
+opencv-python
+
+# Utilities
+python-dotenv

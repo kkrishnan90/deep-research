@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kinova_llm_control</name>
+  <version>0.1.0</version>
+  <description>
+    LLM-based control for Kinova Mico 2 robotic arm with Intel RealSense D435 depth camera.
+    Uses Google Gemini API via Vertex AI for natural language command processing.
+  </description>
+
+  <maintainer email="user@example.com">Developer</maintainer>
+  <license>MIT</license>
+
+  <url type="repository">https://github.com/kkrishnan90/deep-research</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- ROS core dependencies -->
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_msgs</depend>
+
+  <!-- MoveIt dependencies -->
+  <depend>moveit_commander</depend>
+  <depend>moveit_msgs</depend>
+
+  <!-- Kinova dependencies -->
+  <depend>kinova_msgs</depend>
+
+  <!-- Image processing -->
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+
+  <!-- Runtime dependencies -->
+  <exec_depend>kinova_gazebo</exec_depend>
+  <exec_depend>kinova_driver</exec_depend>
+  <exec_depend>realsense_gazebo_plugin</exec_depend>
+
+  <export>
+  </export>
+</package>

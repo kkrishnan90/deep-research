@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+  Launch only the LLM controller (assumes Gazebo and MoveIt are already running).
+
+  Usage:
+    roslaunch kinova_llm_control llm_only.launch
+-->
+<launch>
+  <!-- LLM Configuration -->
+  <arg name="project_id" default="account-pocs"/>
+  <arg name="location" default="us-central1"/>
+  <arg name="model_name" default="gemini-3-pro-preview"/>
+
+  <!-- Launch LLM Controller -->
+  <node name="llm_controller"
+        pkg="kinova_llm_control"
+        type="llm_controller.py"
+        output="screen"
+        respawn="false">
+    <param name="project_id" value="$(arg project_id)"/>
+    <param name="location" value="$(arg location)"/>
+    <param name="model_name" value="$(arg model_name)"/>
+  </node>
+
+  <!-- Launch Command Interface (optional) -->
+  <!-- Uncomment to auto-start the command interface -->
+  <!--
+  <node name="command_interface"
+        pkg="kinova_llm_control"
+        type="command_interface.py"
+        output="screen"
+        launch-prefix="xterm -e"/>
+  -->
+
+</launch>

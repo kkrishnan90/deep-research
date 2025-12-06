@@ -1,0 +1,56 @@
+# Robot Configuration for Kinova Mico LLM Control
+# This file contains parameters for the LLM controller
+
+# LLM Settings
+llm:
+  project_id: "account-pocs"
+  location: "us-central1"
+  model_name: "gemini-3-pro-preview"
+  max_tokens: 5000
+  temperature: 1
+
+# Robot Settings
+robot:
+  type: "m1n6s300"  # Mico v1, 6DOF, 3-finger gripper
+  base_frame: "m1n6s300_link_base"
+  end_effector_frame: "m1n6s300_end_effector"
+
+  # Joint limits (radians)
+  joint_limits:
+    joint_1: [-3.14159, 3.14159]
+    joint_2: [0.82, 5.46]
+    joint_3: [0.33, 5.95]
+    joint_4: [-3.14159, 3.14159]
+    joint_5: [-3.14159, 3.14159]
+    joint_6: [-3.14159, 3.14159]
+
+# Camera Settings
+camera:
+  topic_rgb: "/camera/color/image_raw"
+  topic_depth: "/camera/depth/image_raw"
+  topic_pointcloud: "/camera/depth/points"
+  frame_id: "camera_link"
+
+# MoveIt Settings
+moveit:
+  arm_group: "arm"
+  gripper_group: "gripper"
+  planning_time: 5.0
+  num_planning_attempts: 10
+  goal_position_tolerance: 0.01
+  goal_orientation_tolerance: 0.01
+
+# Workspace Boundaries (meters, relative to robot base)
+workspace:
+  x_min: -0.5
+  x_max: 0.8
+  y_min: -0.5
+  y_max: 0.5
+  z_min: 0.0
+  z_max: 0.6
+
+# Safety Settings
+safety:
+  max_velocity_scaling: 0.5
+  max_acceleration_scaling: 0.5
+  collision_check: true
