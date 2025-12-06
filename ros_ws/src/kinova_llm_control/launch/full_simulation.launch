@@ -1,23 +1,11 @@
 <?xml version="1.0"?>
 <!--
   Full simulation launch file for Kinova Mico with RealSense D435 and LLM control.
-
-  This launch file starts:
-  1. Gazebo with the Kinova Mico arm
-  2. MoveIt for motion planning
-  3. LLM controller for natural language commands
-
-  Usage:
-    roslaunch kinova_llm_control full_simulation.launch
-
-  Arguments:
-    kinova_robotType: Robot type (default: m1n6s300)
-    use_trajectory_controller: Use trajectory controller for MoveIt (default: true)
-    paused: Start Gazebo paused (default: false)
 -->
 <launch>
   <!-- Arguments -->
   <arg name="kinova_robotType" default="m1n6s300"/>
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
   <arg name="use_trajectory_controller" default="true"/>
   <arg name="paused" default="false"/>
   <arg name="gui" default="true"/>
@@ -25,22 +13,48 @@
   <!-- LLM Configuration -->
   <arg name="project_id" default="account-pocs"/>
   <arg name="location" default="global"/>
-  <arg name="model_name" default="gemini-3-pro-preview"/>
+  <arg name="model_name" default="gemini-2.0-flash"/>
 
-  <!-- Launch Gazebo with Kinova arm -->
-  <include file="$(find kinova_gazebo)/launch/robot_launch.launch">
+  <!-- Launch Gazebo with TABLETOP world (includes table and colored balls) -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find kinova_llm_control)/worlds/tabletop_workspace.world"/>
+    <arg name="debug" value="false"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="headless" value="false"/>
+  </include>
+
+  <!-- Load combined robot+camera URDF (robot on table, camera on floor stand) -->
+  <param name="robot_description" 
+         command="$(find xacro)/xacro --inorder '$(find kinova_llm_control)/urdf/m1n6s300_with_camera.xacro'"/>
+
+  <!-- Spawn robot+camera in Gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+        args="-urdf -model $(arg kinova_robotName) -param robot_description
+               -J $(arg kinova_robotType)_joint_1 0.0
+               -J $(arg kinova_robotType)_joint_2 2.9
+               -J $(arg kinova_robotType)_joint_3 1.3
+               -J $(arg kinova_robotType)_joint_4 -2.07
+               -J $(arg kinova_robotType)_joint_5 1.4
+               -J $(arg kinova_robotType)_joint_6 0.0
+               -J $(arg kinova_robotType)_joint_finger_1 1.0
+               -J $(arg kinova_robotType)_joint_finger_2 1.0
+               -J $(arg kinova_robotType)_joint_finger_3 1.0"/>
+
+  <!-- Robot controllers -->
+  <include file="$(find kinova_control)/launch/kinova_control.launch">
+    <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
     <arg name="kinova_robotType" value="$(arg kinova_robotType)"/>
     <arg name="use_trajectory_controller" value="$(arg use_trajectory_controller)"/>
-    <arg name="paused" value="$(arg paused)"/>
-    <arg name="gui" value="$(arg gui)"/>
+    <arg name="is7dof" value="false"/>
+    <arg name="has2finger" value="false"/>
   </include>
 
   <!-- Launch MoveIt -->
-  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch">
-  </include>
+  <include file="$(find m1n6s300_moveit_config)/launch/m1n6s300_gazebo_demo.launch"/>
 
   <!-- Launch LLM Controller -->
-  <!-- Using wrapper script to ensure venv Python with google-genai is used -->
   <node name="llm_controller"
         pkg="kinova_llm_control"
         type="llm_controller_wrapper.sh"

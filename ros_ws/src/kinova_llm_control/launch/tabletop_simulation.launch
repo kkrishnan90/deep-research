@@ -64,17 +64,26 @@
               -J $(arg kinova_robotType)_joint_finger_3 1.0"/>
 
   <!-- ==================== Load Controllers ==================== -->
+  <!-- Load controller config into the robot namespace -->
   <rosparam file="$(find kinova_control)/config/$(arg kinova_robotType)_control.yaml" command="load"/>
 
-  <node name="$(arg kinova_robotName)_joints_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen"
-        args="$(arg kinova_robotName)_joint_state_controller $(arg kinova_robotName)_effort_finger_trajectory_controller"
+  <!-- Spawn all controllers in the robot namespace (ns is critical!) -->
+  <!-- Controllers defined in YAML under m1n6s300: namespace -->
+  <node name="$(arg kinova_robotName)_trajectory_controller" pkg="controller_manager" type="spawner"
+        output="screen" ns="$(arg kinova_robotName)" respawn="false"
+        args="effort_joint_trajectory_controller
+              effort_finger_trajectory_controller
+              finger_tip_1_position_controller
+              finger_tip_2_position_controller
+              finger_tip_3_position_controller
+              joint_state_controller"
         if="$(arg use_trajectory_controller)"/>
 
-  <node name="$(arg kinova_robotName)_trajectory_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen"
-        args="--stopped $(arg kinova_robotName)_effort_joint_trajectory_controller"
-        if="$(arg use_trajectory_controller)"/>
+  <!-- Robot state publisher for TF transforms -->
+  <node name="$(arg kinova_robotName)_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="true" output="screen">
+    <remap from="/joint_states" to="/$(arg kinova_robotName)/joint_states"/>
+  </node>
 
   <!-- ==================== Spawn Table and Objects ==================== -->
   <!-- Spawn after robot is loaded (delay to ensure Gazebo is ready) -->

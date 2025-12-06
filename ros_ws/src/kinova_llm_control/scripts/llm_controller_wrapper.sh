@@ -1,11 +1,14 @@
 #!/bin/bash
-# Wrapper script to run llm_controller.py with the venv Python that has google-genai installed
-# Also adds ROS Python packages to PYTHONPATH so rospy works
+# Wrapper script to run llm_controller.py with the llm_venv Python
+# while also including ROS Python packages
 
-VENV_PYTHON="/home/krishnan_kkrish_altostrat_com/llm_venv/bin/python3"
-SOURCE_SCRIPT="/home/krishnan_kkrish_altostrat_com/catkin_ws/src/kinova_llm_control/scripts/llm_controller.py"
+# Source ROS environment
+source /opt/ros/noetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
 
-# Add ROS and catkin Python paths for rospy, moveit_commander, etc.
-export PYTHONPATH="/home/krishnan_kkrish_altostrat_com/catkin_ws/devel/lib/python3/dist-packages:/opt/ros/noetic/lib/python3/dist-packages:$PYTHONPATH"
+# Set PYTHONPATH to include both venv and ROS packages
+export PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:$PYTHONPATH
+export PYTHONPATH=~/catkin_ws/devel/lib/python3/dist-packages:$PYTHONPATH
 
-exec "$VENV_PYTHON" "$SOURCE_SCRIPT" "$@"
+# Run the LLM controller with venv Python
+exec ~/llm_venv/bin/python3 $(rospack find kinova_llm_control)/scripts/llm_controller.py "$@"
