@@ -40,9 +40,10 @@
   </include>
 
   <!-- Launch LLM Controller -->
+  <!-- Using wrapper script to ensure venv Python with google-genai is used -->
   <node name="llm_controller"
         pkg="kinova_llm_control"
-        type="llm_controller.py"
+        type="llm_controller_wrapper.sh"
         output="screen"
         respawn="false">
     <param name="project_id" value="$(arg project_id)"/>

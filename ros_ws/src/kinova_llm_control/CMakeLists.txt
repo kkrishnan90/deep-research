@@ -41,6 +41,12 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+## Install shell wrapper script (uses venv Python with google-genai)
+install(PROGRAMS
+  scripts/llm_controller_wrapper.sh
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 ## Install launch files, config, and urdf
 install(DIRECTORY launch config urdf
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
