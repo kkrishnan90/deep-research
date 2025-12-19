@@ -148,11 +148,8 @@ curl https://sdk.cloud.google.com | bash
 exec -l $SHELL
 gcloud init
 
-# Authenticate
-gcloud auth application-default login
-
-# Set project
-export GOOGLE_CLOUD_PROJECT=your-project-id
+# Set Gemini API key (get from https://aistudio.google.com/apikey)
+export GOOGLE_API_KEY=your-api-key-here
 ```
 
 ## Project Structure
@@ -373,8 +370,7 @@ Use Chrome Remote Desktop for GUI access to Gazebo.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `GOOGLE_CLOUD_PROJECT` | GCP project ID | `account-pocs` |
-| `GOOGLE_CLOUD_LOCATION` | Vertex AI location | `us-central1` |
+| `GOOGLE_API_KEY` | Gemini API key (get from https://aistudio.google.com/apikey) | (required) |
 | `GAZEBO_PLUGIN_PATH` | Path to Gazebo plugins | (add catkin devel/lib) |
 
 ## License
@@ -385,4 +381,4 @@ MIT License - See LICENSE file for details.
 
 - [Kinova Robotics](https://github.com/Kinovarobotics/kinova-ros) for the Kinova ROS packages
 - [PAL Robotics](https://github.com/pal-robotics/realsense_gazebo_plugin) for the RealSense Gazebo plugin
-- [Google](https://cloud.google.com/vertex-ai) for Vertex AI and Gemini
+- [Google](https://ai.google.dev/) for Gemini API

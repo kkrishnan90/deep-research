@@ -77,19 +77,14 @@ class LLMController:
         rospy.init_node('llm_controller', anonymous=False)
 
         # Configuration
-        self.project_id = rospy.get_param('~project_id', 'account-pocs')
-        self.location = rospy.get_param('~location', 'us-central1')
-        self.model_name = rospy.get_param('~model_name', 'gemini-2.0-flash')
+        self.api_key = rospy.get_param('~api_key', os.environ.get('GOOGLE_API_KEY', ''))
+        self.model_name = rospy.get_param('~model_name', 'gemini-3-flash-preview')
 
         # Initialize Gemini client
         self.gemini_client = None
         if GEMINI_AVAILABLE:
             try:
-                self.gemini_client = genai.Client(
-                    vertexai=True,
-                    project=self.project_id,
-                    location=self.location
-                )
+                self.gemini_client = genai.Client(api_key=self.api_key)
                 rospy.loginfo(f"Gemini client initialized with model: {self.model_name}")
             except Exception as e:
                 rospy.logerr(f"Failed to initialize Gemini client: {e}")

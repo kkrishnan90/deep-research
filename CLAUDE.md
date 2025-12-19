@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Robotics simulation project for a pick-and-place system using:
 - **Robotic Arm**: Kinova Mico 2 M1N6S300 (6 DOF, 3-finger gripper)
 - **Depth Camera**: Intel RealSense D435
-- **LLM**: Gemini 3 Pro Preview via Vertex AI (model: `gemini-3-pro-preview`, package: `google-genai`)
+- **LLM**: Gemini 3 Flash Preview via API Key (model: `gemini-3-flash-preview`, package: `google-genai`)
 - **Simulation**: Gazebo Classic 11
 - **Framework**: ROS Noetic
 
@@ -176,9 +176,8 @@ Copy `.env.example` to `.env` and configure:
 ```bash
 GCP_PROJECT_ID=account-pocs
 GCP_ZONE=us-central1-a
-GOOGLE_CLOUD_PROJECT=account-pocs
-GOOGLE_CLOUD_LOCATION=us-central1
-GOOGLE_GENAI_USE_VERTEXAI=true
+# Gemini API Key (get from https://aistudio.google.com/apikey)
+GOOGLE_API_KEY=your-api-key-here
 ```
 
 ## Remote Access
@@ -196,9 +195,10 @@ bash scripts/gcp/verify_setup.sh
 
 # Test LLM connection
 python3 -c "
+import os
 from google import genai
-client = genai.Client(vertexai=True, project='account-pocs', location='us-central1')
-response = client.models.generate_content(model='gemini-3-pro-preview', contents='Hello')
+client = genai.Client(api_key=os.environ.get('GOOGLE_API_KEY'))
+response = client.models.generate_content(model='gemini-3-flash-preview', contents='Hello')
 print(response.text)
 "
 ```
